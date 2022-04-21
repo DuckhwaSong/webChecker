@@ -4,3 +4,11 @@
 // `nodeIntegration` is turned off. Use `preload.js` to
 // selectively enable features needed in the rendering
 // process.
+
+/*
+const {ipcRenderer} = require('electron');
+ipcRenderer.send('getGlobalVal',{"123":"123"});
+ipcRenderer.on('setGlobalVal', (event, message) => {
+    //ipcRenderer.send('EventB', {someotherData});
+    console.log(message)
+});*/
