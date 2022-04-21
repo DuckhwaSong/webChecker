@@ -3,17 +3,111 @@
   <head>
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
+    <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">-->
+    <!--<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'none'; style-src 'self'">-->
+    <!--<meta http-equiv="Content-Security-Policy" content="default-src 'none'">-->
     <link href="./styles.css" rel="stylesheet">
     <title>Hello World!</title>
+    <!--<style>
+      *{ padding:0px; margin:0px; }
+      #contentWrapper { position: relative; }
+      #content { position: fixed; top: 0; left: 0; right: 0; bottom: 0; }
+    </style>-->
+    <style>
+      html,
+      body {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+      }
+      </style>
+      <script>
+        const {ipcRenderer} = require('electron');
+        ipcRenderer.send('getGlobalVal',{"123":"123"});
+        ipcRenderer.on('setGlobalVal', (event, message) => {
+            //ipcRenderer.send('EventB', {someotherData});
+            console.log(message)
+        });
+
+
+        // alert('이건되냐1?');        
+        var jsonData={};
+        //console.log(jsonData); 
+        function callJson(fileName){
+          var filePath = document.getElementsByName(fileName)[0];
+          //console.log(filePath);
+
+          // json 파일을 읽어온다
+          var fReader = new FileReader();
+          fReader.readAsText(filePath.files[0]);
+          fReader.onloadend = function(event){
+            alert(event.target.result);
+            jsonData=JSON.parse(event.target.result);
+            console.log(jsonData);
+          }
+        }
+      </script>
   </head>
   <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
+    <!--<div master id="contentWrapper">
+      <webview ng-style="style" id="content" src="https://www.naver.com" autosize="on" allowpopups></webview>
+    </div>-->
+    <div>
+      <input type="file" id="files" name="jsonFile" accept=".json">
+      <button type="button" onclick="callJson('jsonFile');">실행</button>
+    </div>
+    
+    
+    <webview id="webview" style="display: inline-flex; width: 100%;height: 100%;" src="http://www.naver.com" autosize="on" useragent="Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"></webview>
 
-    <!-- You can also require other files to run in this process -->
+    
+    <!-- <webview style='width: 100px; height: 100px; border:1px solid red;' nodeIntegration src="page1.html"></webview> -->
     <script src="./renderer.js"></script>
+    <p>
+      <script>
+      onload = () => {        
+        const webview = document.getElementById('webview')
+        webview.addEventListener("dom-ready", function(){  // 페이지가 변경될때 마다 실행
+          //alert('webview onload 이건되냐!?'); 
+          //webview.openDevTools();   // 개발자도구를 개발창으로 열기  
+        });
+        //webview.addEventListener('did-start-loading', function(){alert('start-loading');})
+        //webview.addEventListener('did-stop-loading', function(){alert('stop-loading');})
+      }
+      /* json 읽어오는 샘플
+      var fileName="jsonFile";
+        var json;
+        function handleFileSelect(evt) {
+          var files = evt.target.files; // FileList object
+          // files is a FileList of File objects. List some properties.
+          var output = [];
+          for (var i = 0, f; f = files[i]; i++) {
+              var reader = new FileReader();
+              // Closure to capture the file information.
+              reader.onload = (function (theFile) {
+                return function (e) {
+                    console.log('e readAsText = ', e);
+                    console.log('e readAsText target = ', e.target);
+                    try {
+                      json = JSON.parse(e.target.result);
+                      console.log('json global var has been set to parsed json of this file here it is unevaled = \n' + JSON.stringify(json));
+                      jsonData=JSON.stringify(json);
+                      alert(json.init);
+                    } catch (ex) {
+                      console.log('ex when trying to parse json = ' + ex);
+                    }
+                }
+              })(f);
+              reader.readAsText(f);
+              
+              
+          }
+        }
+        document.getElementById('files').addEventListener('change', handleFileSelect, false); 
+        */
+      </script>
+    </p>
   </body>
 </html>
